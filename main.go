@@ -2,15 +2,15 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
-	"fmt"
 
+	"github.com/spf13/cobra"
 	"github.com/tdewolff/minify"
 	"github.com/tdewolff/minify/css"
 	"github.com/tdewolff/minify/js"
-	"github.com/spf13/cobra"
 )
 
 func main() {
