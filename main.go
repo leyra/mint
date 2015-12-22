@@ -5,11 +5,11 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"fmt"
 
 	"github.com/tdewolff/minify"
 	"github.com/tdewolff/minify/css"
 	"github.com/tdewolff/minify/js"
-
 	"github.com/spf13/cobra"
 )
 
@@ -19,6 +19,10 @@ func main() {
 		Short: "Minify your javascript files",
 		Long:  `Use this command to generate your minified javascript files.`,
 		Run: func(cmd *cobra.Command, args []string) {
+			if len(os.Args) < 3 {
+				fmt.Printf("You must specify the js file you'd like to minify.\n")
+				os.Exit(2)
+			}
 			input := readFileIntoBuffer(args[0])
 			js := minifyJavascript(input)
 
@@ -37,6 +41,10 @@ func main() {
 		Short: "Minify your css files",
 		Long:  `Use this command to generate your minified css files.`,
 		Run: func(cmd *cobra.Command, args []string) {
+			if len(os.Args) < 3 {
+				fmt.Printf("You must specify the css file you'd like to minify.\n")
+				os.Exit(2)
+			}
 			input := readFileIntoBuffer(args[0])
 			js := minifyCss(input)
 
@@ -66,7 +74,8 @@ func isDirectory(path string) bool {
 func readFileIntoBuffer(path string) *bytes.Buffer {
 	f, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("Error: %s\n", err)
+		os.Exit(2)
 	}
 
 	return bytes.NewBuffer(f)
