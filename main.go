@@ -41,14 +41,22 @@ func main() {
 		Short: "Minify your css files",
 		Long:  `Use this command to generate your minified css files.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(os.Args) < 3 {
+			if len(os.Args) == 2 {
 				fmt.Printf("You must specify the css file you'd like to minify.\n")
 				os.Exit(2)
 			}
-			input := readFileIntoBuffer(args[0])
-			js := minifyCss(input)
 
-			writeFile("out.css", js)
+			fb := FileBuffer{}
+
+			if len(os.Args) > 2 {
+				for i := 2; i < len(os.Args); i++ {
+					input := readFileIntoBuffer(args[i])
+					fb.Write(minifyCss(input).Bytes())
+				}
+			}
+
+			//fmt.Println(fb.Contents().String())
+			//writeFile("out.css", fb.Contents())
 		},
 	}
 
@@ -56,6 +64,20 @@ func main() {
 	rootCmd.AddCommand(JavascriptCmd)
 	rootCmd.AddCommand(CssCmd)
 	rootCmd.Execute()
+}
+
+type FileBuffer struct {
+	contents *bytes.Buffer
+}
+
+func (fb FileBuffer) Contents() (c *bytes.Buffer) {
+	return fb.contents
+}
+
+func (fb *FileBuffer) Write(p []byte) (n int, err error) {
+	fmt.Println("Here")
+	fb.contents.Write(p)
+	return len(p), nil
 }
 
 // isDirectory checks to see if the path given to be processed is a directory.
